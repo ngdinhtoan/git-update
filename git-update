@@ -1,0 +1,32 @@
+#!/bin/sh
+
+# -----------------------------------------------------------------------------
+# @author: Toan Nguyen <toan.nguyen@infocube.ch>
+# @date: 19 March 2013 
+# @last-modified: 19 March 2013 
+#
+# this script is use to rebase master and develop branches with remote branches
+#
+# Install: cp git-update $(git --exec-path)
+# Usage: git update
+# -----------------------------------------------------------------------------
+
+# include git sh setup
+. "$(git --exec-path)/git-sh-setup"
+
+# check if this command is called in a git repository, and repo is clean
+require_work_tree
+require_clean_work_tree rebase "Please commit or stash theme."
+
+# git current branch
+CURRENT_BRANCH="$(git rev-parse --abbrev-ref HEAD)"
+BRANCHES=( master develop )
+
+for i in $(seq 0 $((${#BRANCHES[@]} - 1))); do
+    say "Rebasing ${BRANCHES[$i]} branch..."
+    git checkout ${BRANCHES[$i]} > /dev/null 2>&1
+    git pull -r
+    require_clean_work_tree update "Please resolve conflict..."
+done
+
+git checkout $CURRENT_BRANCH > /dev/null 2>&1
