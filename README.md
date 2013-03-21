@@ -10,4 +10,4 @@ Usage
 
 Currently, this command will rebase your "master" and "develop" branches with remote branchs
 
-    git update
+    git update [branch] ...
