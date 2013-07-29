@@ -32,14 +32,18 @@ if [[ $# -gt 0 ]]; then
     BRANCHES=( $@ )
 fi
 
+say "Fetching data from remote origin..."
+git fetch -p
+
 for i in $(seq 0 $((${#BRANCHES[@]} - 1))); do
     if [[ -z "$(git branch --list ${BRANCHES[$i]})" ]]; then
+        say "Ignore ${BRANCHES[$i]} branch..."
         continue
     fi
 
     say "Rebasing ${BRANCHES[$i]} branch..."
     git checkout ${BRANCHES[$i]} > /dev/null 2>&1
-    git pull -r
+    git rebase HEAD
     require_clean_work_tree update "Please resolve conflict..."
 done
 
